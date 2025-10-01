@@ -16,11 +16,13 @@ clock = pg.time.Clock()
 r = 30  # радиус круга
 # координаты центра круга:
 x = 10  # скрываем за левой границей
+speed = 2
 y = WIN_HEIGHT // 2 - 25 # выравниваем по центру по вертикали
 pg.draw.rect(screen, ORANGE, [x, y, 40, 40])  # рисуем круг
 pg.display.update()  # обновляем окно
 
 flag_play = True
+flag1 = "вправо"
 while flag_play:
     clock.tick(FPS)
 
@@ -34,10 +36,17 @@ while flag_play:
 
     # изменение состояний объектов:
     # если круг полностью скрылся за правой границей
-    if x == WIN_WIDTH:
-        x -= 2  # перемещаем его за левую
-    else:  # если еще нет
-        x += 2  # то на следующей итерации цикла круг отобразится немного правее
+    if x >= WIN_WIDTH - r:
+        flag1 = "влево"
+        speed += 1
+    if x <= 0:
+        flag1 = "вправо"
+        speed += 1
+
+    if flag1 == "вправо":
+        x += speed
+    if flag1 == "влево":
+        x -= speed
 
     screen.fill(WHITE)  # заливаем фон, стирая предыдущий круг
     pg.draw.rect(screen, ORANGE, [x, y, 40, 40])  # рисуем новый, сдвинутый круг
