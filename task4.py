@@ -14,7 +14,7 @@ clock = pg.time.Clock()
 # до начала игрового цикла отображаем объекты:
 # координаты центра круга
 r = 30  # радиус круга
-x, y = random.randint(0, 600), random.randint(0, 500)
+x, y = random.randint(r, WIDTH - r), random.randint(r, HEIGHT - r)
 pg.draw.circle(screen, ORANGE, (x, y), r)  # рисуем круг
 pg.display.update()  # обновляем окно
 
@@ -30,7 +30,14 @@ while flag_play:
     if not flag_play:
         break
 
-    screen.fill(MINT)  # заливаем фон, стирая предыдущий круг
+    pressed = pg.mouse.get_pressed()
+    if pressed[1]:
+        pos = pg.mouse.get_pos()
+    dist = ((pos[0]-x)**2 + (pos[1]-y)**2) ** 0.5
+    if r <= dist :
+
+
+    screen.fill(MINT) # заливаем фон, стирая предыдущий круг
     pg.draw.circle(screen, ORANGE, (x, y), r)  # рисуем новый, сдвинутый круг
 
     pg.display.update()  # обновляем окно
