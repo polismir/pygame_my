@@ -37,7 +37,7 @@ ball1_rect.top = HEIGHT * 1 / 4
 ball1.fill((0, 0, 0, 0))
 pg.draw.circle(ball1, (*RED, 100),(ball1_rect.width / 2, ball1_rect.height / 2 - 10), 40)
 speed1 = 7
-flag1 = "влево"
+flag1 = "вправо"
 
 
 # если надо до игрового цикла (=на самом старте игры) отобразить объекты, то отрисовываем их здесь:
@@ -61,25 +61,29 @@ while flag_play:
     if not flag_play:
         break
 
-    if ball_rect.right >= WIDTH:
+    if ball_rect.left >= WIDTH:
         flag = "влево"
+        ball_rect.top = HEIGHT * 1 / 1.75
     if ball_rect.left <= -120:
         flag = "вправо"
+        ball_rect.top = HEIGHT * 1 / 4
 
     if flag == "вправо":
         ball_rect.right += speed
     if flag == "влево":
         ball_rect.left -= speed
 
-    if ball1_rect.right >= WIDTH:
+    if ball1_rect.left >= WIDTH:
         flag1 = "влево"
+        ball1_rect.top = HEIGHT * 1 / 1.75
     if ball1_rect.left <= -120:
         flag1 = "вправо"
+        ball1_rect.top = HEIGHT * 1 / 4
 
     if flag1 == "вправо":
-        ball_rect.right += speed1
+        ball1_rect.right += speed1
     if flag1 == "влево":
-        ball_rect.left -= speed1
+        ball1_rect.left -= speed1
 
     # перерисовка экрана:
     # ...
