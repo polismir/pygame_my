@@ -16,7 +16,7 @@ class Ball:
     SIZE = HEIGHT * 1 / 4
 
     def __init__(self):
-        self.speed = random.randint(0, 25)
+        self.speed = random.randint(1, 25)
         number1, number2, number3 = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
         self.random_color = (number1, number2, number3)
         self.random_size = random.randint(5, 55)
@@ -37,8 +37,8 @@ class Ball:
             else:
                 self.ball_rect.top = HEIGHT * 1 / 1.75
         else:
-            if self.ball_rect.top == HEIGHT * 1 / 1.75:
-                if self.ball_rect.right >= WIDTH:
+            if self.ball_rect.top == round(HEIGHT * 1 / 1.75):
+                if self.ball_rect.right > 0:
                     self.ball_rect.left -= self.speed
                 else:
                     self.ball_rect.top = HEIGHT * 1 / 4
@@ -74,6 +74,8 @@ while flag_play:
             pg.quit()
             flag_play = False
             break
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            balls.append(Ball())
     if not flag_play:
         break
 
