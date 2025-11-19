@@ -23,6 +23,8 @@ class Food:
         self.food_surf.fill((0, 0, 0, 0))
         pg.draw.circle(self.food_surf, (*BLUE, 255),
                        (self.food_rect.width / 2, self.food_rect.height / 2), self.random_size)
+        self.active = True
+        self.mask = pg.mask.from_surface(self.food_surf)
 
     def draw(self, screen):
         screen.blit(self.food_surf, self.food_rect)
@@ -39,6 +41,7 @@ class Player:
         pg.draw.circle(self.player_surf, (*BLACK, 255),
                        (self.player_rect.width / 2, self.player_rect.height / 2), 20)
         self.speed = Player.SPEED
+        self.mask = pg.mask.from_surface(self.player_surf)
 
     def move(self, dx=0, dy=0):
         if (self.player_rect.left + dx * self.speed) > 0 and (self.player_rect.right + dx * self.speed) < WIDTH:
@@ -49,12 +52,16 @@ class Player:
     def draw(self, screen):
         screen.blit(self.player_surf, self.player_rect)
 
+
 def check_collisions(player, foods):
     for food in foods:
-        offset = (food.food_rect.x - player.player_rect.x, food.food_rect.y - player.player_rect.y)
-        if player.mask.overlap(food.mask, offset) is not None:
-            
-            
+        if food.active == True:
+            offset = (food.food_rect.x - player.player_rect.x, food.food_rect.y - player.player_rect.y)
+            if player.mask.overlap(food.mask, offset) is not None:
+                food.active = False
+                foods.append(Food())
+                
+
 pg.init()
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Игра")
@@ -91,8 +98,11 @@ while flag_play:
     if keys[pg.K_DOWN]:
         player.move(dy=1)
 
+    check_collisions(player, foods)
+
     screen.fill(WHITE)
     for elem in foods:
-        elem.draw(screen)
+        if elem.active == True:
+            elem.draw(screen)
     player.draw(screen)
     pg.display.update()
