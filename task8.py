@@ -32,14 +32,15 @@ class Food:
 
 class Player:
     SPEED = 3
-    SIZE = 50
+    SIZE = 200
 
     def __init__(self):
         self.player_surf = pg.Surface((Player.SIZE, Player.SIZE), pg.SRCALPHA)
         self.player_rect = self.player_surf.get_rect(center=(WIDTH / 2, HEIGHT / 2))
         self.player_surf.fill((0, 0, 0, 0))
+        self.r = 20
         pg.draw.circle(self.player_surf, (*BLACK, 255),
-                       (self.player_rect.width / 2, self.player_rect.height / 2), 20)
+                       (self.player_rect.width / 2, self.player_rect.height / 2), self.r)
         self.speed = Player.SPEED
         self.mask = pg.mask.from_surface(self.player_surf)
 
@@ -49,6 +50,13 @@ class Player:
         if (self.player_rect.top + dy * self.speed) > 0 and (self.player_rect.bottom + dy * self.speed) < HEIGHT:
             self.player_rect.y += dy * self.speed
 
+    def eat(self, r):
+        if self.r <= 90:
+            self.r += r / 5
+            self.player_surf.fill((0, 0, 0, 0))
+            pg.draw.circle(self.player_surf, (*BLACK, 255),
+                    (self.player_rect.width / 2, self.player_rect.height / 2), self.r)
+            self.mask = pg.mask.from_surface(self.player_surf)
     def draw(self, screen):
         screen.blit(self.player_surf, self.player_rect)
 
@@ -60,7 +68,8 @@ def check_collisions(player, foods):
             if player.mask.overlap(food.mask, offset) is not None:
                 food.active = False
                 foods.append(Food())
-                
+                player.eat(food.random_size)
+
 
 pg.init()
 screen = pg.display.set_mode((WIDTH, HEIGHT))
