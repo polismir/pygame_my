@@ -10,6 +10,7 @@ WHITE = (255, 255, 255)
 BLUE = (52, 52, 153)
 RED = (178, 34, 34)
 DARK_RED = (139, 0, 0)
+GREEN = (0, 128, 0)
 
 class Food:
     SIZE = 75
@@ -58,9 +59,14 @@ class Player:
             pg.draw.circle(self.player_surf, (*BLACK, 255),
                     (self.player_rect.width / 2, self.player_rect.height / 2), self.r)
             self.mask = pg.mask.from_surface(self.player_surf)
+
     def draw(self, screen):
         screen.blit(self.player_surf, self.player_rect)
 
+    def start_radius(self):
+        self.r = 20
+        pg.draw.circle(self.player_surf, (*BLACK, 255),
+                       (self.player_rect.width / 2, self.player_rect.height / 2), self.r)
 
 def check_collisions(player, foods):
     for food in foods:
@@ -83,7 +89,7 @@ class Text:
 
 
 class Button:
-    def __init__(self, text_size, text, text_color, button_pos, button_color, button_cover_color):
+    def __init__(self, text_size, text, text_color, button_color, button_cover_color, button_pos):
         self.button_color = button_color
         self.button_cover_color = button_cover_color
         self.font = pg.font.SysFont(None, text_size)
@@ -97,6 +103,10 @@ class Button:
     def redraw(self, state):
         if state:
             self.button_surf.fill(self.button_cover_color)
+            pg.draw.rect(self.button_surf, BLACK, (0, 0, self.button_rect.width, self.button_rect.height), 3)
+        else:
+            self.button_surf.fill(self.button_color)
+            pg.draw.rect(self.button_surf, BLACK, (0, 0, self.button_rect.width, self.button_rect.height), 3)
 
     def draw(self, screen):
         screen.blit(self.button_surf, self.button_rect)
@@ -104,8 +114,8 @@ class Button:
 
 
 def check_click_on_button(button):
-    if button.button_rect.collidipoint(pg.mouse.get_pos()):
-        print("Кнопка была нажата!")
+    if button.button_rect.collidepoint(pg.mouse.get_pos()):
+        player.start_radius()
 
 
 def check_mouse_on_button(button):
@@ -120,6 +130,9 @@ screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Игра")
 clock = pg.time.Clock()
 
+my_text = Text(32, "Это просто текст", GREEN, (WIDTH / 2, HEIGHT * 1 / 8))
+my_button = Button(64, "Кнопка", BLACK, RED, DARK_RED, (WIDTH / 2, HEIGHT * 2 / 2.5))
+
 foods = [Food(), Food(), Food(), Food(), Food()]
 player = Player()
 
@@ -127,6 +140,8 @@ screen.fill(WHITE)
 for elem in foods:
     elem.draw(screen)
 player.draw(screen)
+my_text.draw(screen)
+my_button.draw(screen)
 pg.display.update()
 
 flag_play = True
@@ -138,8 +153,12 @@ while flag_play:
             pg.quit()
             flag_play = False
             break
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            check_click_on_button(my_button)
     if not flag_play:
         break
+
+    check_mouse_on_button(my_button)
 
     keys = pg.key.get_pressed()
     if keys[pg.K_LEFT]:
@@ -158,4 +177,6 @@ while flag_play:
         if elem.active == True:
             elem.draw(screen)
     player.draw(screen)
+    my_text.draw(screen)
+    my_button.draw(screen)
     pg.display.update()
