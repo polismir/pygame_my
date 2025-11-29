@@ -17,8 +17,8 @@ class Food:
 
     def __init__(self):
         self.random_size = random.randint(5, 35)
-        random_x = random.randint(self.random_size, WIDTH - self.random_size - 300)
-        random_y = random.randint(self.random_size, HEIGHT - self.random_size - 300)
+        random_x = random.randint(100, WIDTH - 100)
+        random_y = random.randint(100, HEIGHT - 100)
 
         self.food_surf = pg.Surface((Food.SIZE, Food.SIZE), pg.SRCALPHA)
         self.food_rect = self.food_surf.get_rect(center=(random_x, random_y))
@@ -56,7 +56,7 @@ class Player:
         global my_text
         if self.r <= 90:
             self.r += r / 5
-            my_text.change_text(str(self.r))
+            my_text.change_text(f"{self.r:.2f}")
             self.player_surf.fill((0, 0, 0, 0))
             pg.draw.circle(self.player_surf, (*BLACK, 255),
                     (self.player_rect.width / 2, self.player_rect.height / 2), self.r)
