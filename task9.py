@@ -17,8 +17,8 @@ class Food:
 
     def __init__(self):
         self.random_size = random.randint(5, 35)
-        random_x = random.randint(self.random_size, WIDTH - self.random_size)
-        random_y = random.randint(self.random_size, HEIGHT - self.random_size)
+        random_x = random.randint(self.random_size, WIDTH - self.random_size - 300)
+        random_y = random.randint(self.random_size, HEIGHT - self.random_size - 300)
 
         self.food_surf = pg.Surface((Food.SIZE, Food.SIZE), pg.SRCALPHA)
         self.food_rect = self.food_surf.get_rect(center=(random_x, random_y))
@@ -53,8 +53,10 @@ class Player:
             self.player_rect.y += dy * self.speed
 
     def eat(self, r):
+        global my_text
         if self.r <= 90:
             self.r += r / 5
+            my_text.change_text(str(self.r))
             self.player_surf.fill((0, 0, 0, 0))
             pg.draw.circle(self.player_surf, (*BLACK, 255),
                     (self.player_rect.width / 2, self.player_rect.height / 2), self.r)
@@ -65,8 +67,10 @@ class Player:
 
     def start_radius(self):
         self.r = 20
+        self.player_surf.fill((0, 0, 0, 0))
         pg.draw.circle(self.player_surf, (*BLACK, 255),
                        (self.player_rect.width / 2, self.player_rect.height / 2), self.r)
+
 
 def check_collisions(player, foods):
     for food in foods:
@@ -80,6 +84,9 @@ def check_collisions(player, foods):
 
 class Text:
     def __init__(self, text_size, text, text_color, text_pos):
+        self.text_color = text_color
+        self.text_pos = text_pos
+        self.text_size = text_size
         self.font = pg.font.SysFont(None, text_size)
         self.surf = self.font.render(text, True, text_color)
         self.rect = self.surf.get_rect(center=text_pos)
@@ -87,6 +94,9 @@ class Text:
     def draw(self, screen):
         screen.blit(self.surf, self.rect)
 
+    def change_text(self, new_text):
+        self.surf = self.font.render(new_text, True, self.text_color)
+        self.rect = self.surf.get_rect(center=self.text_pos)
 
 class Button:
     def __init__(self, text_size, text, text_color, button_color, button_cover_color, button_pos):
@@ -116,6 +126,7 @@ class Button:
 def check_click_on_button(button):
     if button.button_rect.collidepoint(pg.mouse.get_pos()):
         player.start_radius()
+        my_text.change_text(str(player.r))
 
 
 def check_mouse_on_button(button):
@@ -130,11 +141,11 @@ screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Игра")
 clock = pg.time.Clock()
 
-my_text = Text(32, "Это просто текст", GREEN, (WIDTH / 2, HEIGHT * 1 / 8))
-my_button = Button(64, "Кнопка", BLACK, RED, DARK_RED, (WIDTH / 2, HEIGHT * 2 / 2.5))
-
 foods = [Food(), Food(), Food(), Food(), Food()]
 player = Player()
+
+my_text = Text(32, str(player.r), GREEN, (WIDTH / 2, HEIGHT * 1 / 8))
+my_button = Button(64, "Кнопка", BLACK, RED, DARK_RED, (WIDTH / 2, HEIGHT * 2 / 2.5))
 
 screen.fill(WHITE)
 for elem in foods:
