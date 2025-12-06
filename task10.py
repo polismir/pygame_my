@@ -9,6 +9,8 @@ GREY = (177, 171, 170)
 
 class Car:
 
+    speed = 3
+
     def __init__(self):
         self.car_surf = pg.image.load(r"images\car.png").convert_alpha()
         self.car_rect = self.car_surf.get_rect(center=(WIDTH * 1 / 2, HEIGHT * 1 / 2))
@@ -18,49 +20,68 @@ class Car:
         screen.blit(self.car_surf, self.car_rect)
 
     def rotate(self, new_direction):
+        old_center = self.car_rect.center
         if new_direction == "left":
             if self.cur_direction == "up":
                 self.car_surf = pg.transform.rotate(self.car_surf, 90)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "left"
             if self.cur_direction == "right":
                 self.car_surf = pg.transform.rotate(self.car_surf, 180)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "left"
             if self.cur_direction == "down":
                 self.car_surf = pg.transform.rotate(self.car_surf, 270)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "left"
 
         if new_direction == "right":
             if self.cur_direction == "up":
                 self.car_surf = pg.transform.rotate(self.car_surf, 270)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "right"
             if self.cur_direction == "left":
                 self.car_surf = pg.transform.rotate(self.car_surf, 180)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "right"
             if self.cur_direction == "down":
                 self.car_surf = pg.transform.rotate(self.car_surf, 90)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "right"
 
         if new_direction == "up":
             if self.cur_direction == "right":
                 self.car_surf = pg.transform.rotate(self.car_surf, 90)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "up"
             if self.cur_direction == "left":
                 self.car_surf = pg.transform.rotate(self.car_surf, 270)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "up"
             if self.cur_direction == "down":
                 self.car_surf = pg.transform.rotate(self.car_surf, 180)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "up"
 
         if new_direction == "down":
             if self.cur_direction == "right":
                 self.car_surf = pg.transform.rotate(self.car_surf, 270)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "down"
             if self.cur_direction == "left":
                 self.car_surf = pg.transform.rotate(self.car_surf, 90)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "down"
             if self.cur_direction == "up":
                 self.car_surf = pg.transform.rotate(self.car_surf, 180)
+                self.car_rect = self.car_surf.get_rect(center=old_center)
                 self.cur_direction = "down"
+
+    def move(self, dx=0, dy=0):
+        if (self.car_rect.left + dx * self.speed) > 0 and (self.car_rect.right + dx * self.speed) < WIDTH:
+            self.car_rect.x += dx * self.speed
+        if (self.car_rect.top + dy * self.speed) > 0 and (self.car_rect.bottom + dy * self.speed) < HEIGHT:
+            self.car_rect.y += dy * self.speed
 
 
 pg.init()
@@ -89,12 +110,16 @@ while flag_play:
     keys = pg.key.get_pressed()
     if keys[pg.K_LEFT]:
         my_car.rotate(new_direction="left")
-    if keys[pg.K_RIGHT]:
+        my_car.move(dx=-1)
+    elif keys[pg.K_RIGHT]:
         my_car.rotate(new_direction="right")
-    if keys[pg.K_UP]:
+        my_car.move(dx=1)
+    elif keys[pg.K_UP]:
         my_car.rotate(new_direction="up")
-    if keys[pg.K_DOWN]:
+        my_car.move(dy=-1)
+    elif keys[pg.K_DOWN]:
         my_car.rotate(new_direction="down")
+        my_car.move(dy=1)
 
     screen.blit(background, (0, 0))
     my_car.draw(screen)
