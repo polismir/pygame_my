@@ -9,7 +9,7 @@ GREY = (177, 171, 170)
 
 class Car:
 
-    def init(self):
+    def __init__(self):
         self.car_surf = pg.image.load(r"images\car.png").convert_alpha()
         self.car_rect = self.car_surf.get_rect(center=(WIDTH * 1 / 2, HEIGHT * 1 / 2))
         self.cur_direction = "up"
