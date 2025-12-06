@@ -21,35 +21,46 @@ class Car:
         if new_direction == "left":
             if self.cur_direction == "up":
                 self.car_surf = pg.transform.rotate(self.car_surf, 90)
-                self.cur_direction == "left"
+                self.cur_direction = "left"
             if self.cur_direction == "right":
                 self.car_surf = pg.transform.rotate(self.car_surf, 180)
+                self.cur_direction = "left"
             if self.cur_direction == "down":
                 self.car_surf = pg.transform.rotate(self.car_surf, 270)
+                self.cur_direction = "left"
 
         if new_direction == "right":
             if self.cur_direction == "up":
                 self.car_surf = pg.transform.rotate(self.car_surf, 270)
+                self.cur_direction = "right"
             if self.cur_direction == "left":
                 self.car_surf = pg.transform.rotate(self.car_surf, 180)
+                self.cur_direction = "right"
             if self.cur_direction == "down":
                 self.car_surf = pg.transform.rotate(self.car_surf, 90)
+                self.cur_direction = "right"
 
         if new_direction == "up":
             if self.cur_direction == "right":
                 self.car_surf = pg.transform.rotate(self.car_surf, 90)
+                self.cur_direction = "up"
             if self.cur_direction == "left":
                 self.car_surf = pg.transform.rotate(self.car_surf, 270)
+                self.cur_direction = "up"
             if self.cur_direction == "down":
                 self.car_surf = pg.transform.rotate(self.car_surf, 180)
+                self.cur_direction = "up"
 
         if new_direction == "down":
             if self.cur_direction == "right":
                 self.car_surf = pg.transform.rotate(self.car_surf, 270)
+                self.cur_direction = "down"
             if self.cur_direction == "left":
                 self.car_surf = pg.transform.rotate(self.car_surf, 90)
+                self.cur_direction = "down"
             if self.cur_direction == "up":
                 self.car_surf = pg.transform.rotate(self.car_surf, 180)
+                self.cur_direction = "down"
 
 
 pg.init()
