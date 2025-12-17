@@ -99,6 +99,9 @@ while flag_play:
 
     enemy_cars.update()
 
+    if pg.sprite.spritecollideany(my_car, enemy_cars,collided=pg.sprite.collide_mask):
+        break
+
     screen.blit(background, (0, 0))
     my_car.draw(screen)
     enemy_cars.draw(screen)
