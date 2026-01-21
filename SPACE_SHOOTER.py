@@ -2,7 +2,7 @@ import pygame as pg
 import random
 
 FPS = 60
-WIDTH, HEIGHT = 1000, 600
+WIDTH, HEIGHT = 900, 819
 
 
 class MyShip(pg.sprite.Sprite):
@@ -11,9 +11,10 @@ class MyShip(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.image.load(r"images\my_ship.png").convert_alpha()
+        self.image = pg.image.load(r"images\my_ship\myship_move.png").convert_alpha()
         self.image = pg.transform.rotate(self.image, 90)
-        self.rect = self.image.get_rect(center=(WIDTH * 1 / 2, HEIGHT * 1 / 2))
+        self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 1.20, self.image.get_height() * 1 / 1.20))
+        self.rect = self.image.get_rect(center=(WIDTH * 1 / 2, HEIGHT - 100))
         self.mask = pg.mask.from_surface(self.image)
 
     def draw(self, screen):
@@ -26,6 +27,7 @@ class MyShip(pg.sprite.Sprite):
             self.rect.y += dy * self.speed
 
     def shot(self):
+        self.image = pg.image.load(r"images\my_ship\myship_attack.png").convert_alpha()
 
 
 
@@ -57,13 +59,14 @@ class Meteors(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        images = [r'images/meteor_01.png', r'images/meteor_02.png', r'images/meteor_03.png', r'images/meteor_04.png'
-                  r'images/meteor_05.png', r'images/meteor_06.png', r'images/meteor_07.png', r'images/meteor_08.png']
-        random_image = random.choice(images)
+        images = [(r'images/meteors/meteor_01.png', 0.5), (r'images/meteors/meteor_02.png', 0.333), (r'images/meteors/meteor_03.png', 0.333), (r'images/meteors/meteor_04.png', 0.333),
+                    r'images/meteors/meteor_05.png', r'images/meteors/meteor_06.png', r'images/meteors/meteor_07.png', r'images/meteors/meteor_08.png']
+        # random_image = random.choice(images)
+        random_image = images[3]
         self.image = pg.image.load(random_image).convert_alpha()
-        self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 2, self.image.get_height() * 1 / 2))
+        self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 3, self.image.get_height() * 1 / 3))
         self.random_start = random.randint(100, 900)
-        self.rect = self.image.get_rect(center=(self.random_start, 0))
+        self.rect = self.image.get_rect(center=(WIDTH / 2, 200))
         self.mask = pg.mask.from_surface(self.image)
 
     def draw(self, screen):
@@ -78,24 +81,24 @@ screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Игра")
 clock = pg.time.Clock()
 
-background = pg.Surface((WIDTH, HEIGHT))
-
+background = pg.image.load(r"images/cosmic_background.png")
 
 my_ship = MyShip()
 enemy_ships = pg.sprite.Group()
 meteors = pg.sprite.Group()
 
+my_meteor = Meteors()
+
 screen.blit(background, (0, 0))
 enemy_ships.draw(screen)
 my_ship.draw(screen)
 meteors.draw(screen)
+my_meteor.draw(screen)
 pg.display.update()
 
-cnt = 0
 flag_play = True
 while flag_play:
     clock.tick(FPS)
-    cnt += 1
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -115,8 +118,9 @@ while flag_play:
     if keys[pg.K_DOWN]:
         my_ship.update(dy=1)
 
-
     screen.blit(background, (0, 0))
-    my_ship.draw(screen)
     enemy_ships.draw(screen)
+    my_ship.draw(screen)
+    meteors.draw(screen)
+    my_meteor.draw(screen)
     pg.display.update()
