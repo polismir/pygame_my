@@ -60,9 +60,9 @@ class Meteors(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         images = [(r'images/meteors/meteor_01.png', 0.5), (r'images/meteors/meteor_02.png', 0.333), (r'images/meteors/meteor_03.png', 0.333), (r'images/meteors/meteor_04.png', 0.333),
-                    r'images/meteors/meteor_05.png', r'images/meteors/meteor_06.png', r'images/meteors/meteor_07.png', r'images/meteors/meteor_08.png']
+                  (r'images/meteors/meteor_05.png', 0.5), (r'images/meteors/meteor_06.png', 0.5), (r'images/meteors/meteor_07.png', 0.333), (r'images/meteors/meteor_08.png', 0.333)]
         # random_image = random.choice(images)
-        random_image = images[3]
+        random_image = images[7]
         self.image = pg.image.load(random_image).convert_alpha()
         self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 3, self.image.get_height() * 1 / 3))
         self.random_start = random.randint(100, 900)
