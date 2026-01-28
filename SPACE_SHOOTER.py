@@ -1,5 +1,6 @@
 import pygame as pg
 import random
+import math
 
 FPS = 60
 WIDTH, HEIGHT = 900, 819
@@ -55,18 +56,17 @@ class EnemyShips(pg.sprite.Sprite):
 
 class Meteors(pg.sprite.Sprite):
 
-    speed = 3
+    speed = 5
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         images = [(r'images/meteors/meteor_01.png', 0.5), (r'images/meteors/meteor_02.png', 0.333), (r'images/meteors/meteor_03.png', 0.333), (r'images/meteors/meteor_04.png', 0.333),
-                  (r'images/meteors/meteor_05.png', 0.5), (r'images/meteors/meteor_06.png', 0.5), (r'images/meteors/meteor_07.png', 0.333), (r'images/meteors/meteor_08.png', 0.333)]
-        # random_image = random.choice(images)
-        random_image = images[7]
+                  (r'images/meteors/meteor_05.png', 0.333), (r'images/meteors/meteor_06.png', 0.333), (r'images/meteors/meteor_07.png', 0.333), (r'images/meteors/meteor_08.png', 0.333)]
+        random_image, k = random.choice(images)
         self.image = pg.image.load(random_image).convert_alpha()
-        self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 3, self.image.get_height() * 1 / 3))
-        self.random_start = random.randint(100, 900)
-        self.rect = self.image.get_rect(center=(WIDTH / 2, 200))
+        self.image = pg.transform.scale(self.image, (self.image.get_width() * k, self.image.get_height() * k))
+        self.random_start = random.randint(150, 800)
+        self.rect = self.image.get_rect(center=(self.random_start, 0))
         self.mask = pg.mask.from_surface(self.image)
 
     def draw(self, screen):
@@ -87,18 +87,19 @@ my_ship = MyShip()
 enemy_ships = pg.sprite.Group()
 meteors = pg.sprite.Group()
 
-my_meteor = Meteors()
+s = pg.mixer.Sound("music/destructions_music.wav")
 
 screen.blit(background, (0, 0))
 enemy_ships.draw(screen)
 my_ship.draw(screen)
 meteors.draw(screen)
-my_meteor.draw(screen)
 pg.display.update()
 
+cnt = 0
 flag_play = True
 while flag_play:
     clock.tick(FPS)
+    cnt += 1
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -107,6 +108,10 @@ while flag_play:
             break
     if not flag_play:
         break
+
+    if cnt == 120:
+        meteors.add(Meteors())
+        cnt = 0
 
     keys = pg.key.get_pressed()
     if keys[pg.K_LEFT]:
@@ -118,9 +123,16 @@ while flag_play:
     if keys[pg.K_DOWN]:
         my_ship.update(dy=1)
 
+    meteors.update()
+
     screen.blit(background, (0, 0))
     enemy_ships.draw(screen)
     my_ship.draw(screen)
     meteors.draw(screen)
-    my_meteor.draw(screen)
     pg.display.update()
+
+    if pg.sprite.spritecollideany(my_ship, meteors, collided=pg.sprite.collide_mask):
+        s.play()
+        miliseconds = math.ceil(s.get_length()) * 1000
+        pg.time.wait(miliseconds)
+        break
