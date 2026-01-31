@@ -12,7 +12,7 @@ class MyShip(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.image.load(r"images\my_ship\myship_move.png").convert_alpha()
+        self.image = pg.image.load(r"images/my_ship/my_ship.png").convert_alpha()
         self.image = pg.transform.rotate(self.image, 90)
         self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 1.20, self.image.get_height() * 1 / 1.20))
         self.rect = self.image.get_rect(center=(WIDTH * 1 / 2, HEIGHT - 100))
@@ -28,8 +28,26 @@ class MyShip(pg.sprite.Sprite):
             self.rect.y += dy * self.speed
 
     def shot(self):
-        self.image = pg.image.load(r"images\my_ship\myship_attack.png").convert_alpha()
+        new_shot = Shot()
 
+
+class Shot(pg.sprite.Sprite):
+
+    speed = 5
+
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.image.load(r"images/my_ship/shot.png").convert_alpha()
+        self.image = pg.transform.rotate(self.image, 90)
+        self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 2, self.image.get_height() * 1 / 2))
+        self.rect = self.image.get_rect(center=(WIDTH * 1 / 2, HEIGHT - 100))
+        self.mask = pg.mask.from_surface(self.image)
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def update(self):
+        self.rect.y += Shot.speed
 
 
 class EnemyShips(pg.sprite.Sprite):
@@ -38,13 +56,14 @@ class EnemyShips(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        images = [r'images/enemy_ship1.png', r'images/enemy_ship2.png', r'images/enemy_ship3.png',
-                  r'images/enemy_ship4.png']
-        random_image = random.choice(images)
+        images = [(r'images/enemy_ships/enemy_ship1.png', 1.3), (r'images/enemy_ships/enemy_ship2.png', 1.5), (r'images/enemy_ships/enemy_ship3.png', 1.5),
+                  (r'images/enemy_ships/enemy_ship4.png', 2)]
+        random_image, k = random.choice(images)
         self.image = pg.image.load(random_image).convert_alpha()
-        self.image = pg.transform.rotate(self.image, 270)
-        self.random_start = random.randint(50, 950)
-        self.rect = self.image.get_rect(center=(1000, self.random_start))
+        self.image = pg.transform.rotate(self.image,  270)
+        self.image = pg.transform.scale(self.image, (self.image.get_width() * k, self.image.get_height() * k))
+        self.random_start = random.randint(100, 800)
+        self.rect = self.image.get_rect(center=(self.random_start, 0))
         self.mask = pg.mask.from_surface(self.image)
 
     def draw(self, screen):
@@ -65,7 +84,7 @@ class Meteors(pg.sprite.Sprite):
         random_image, k = random.choice(images)
         self.image = pg.image.load(random_image).convert_alpha()
         self.image = pg.transform.scale(self.image, (self.image.get_width() * k, self.image.get_height() * k))
-        self.random_start = random.randint(150, 800)
+        self.random_start = random.randint(100, 800)
         self.rect = self.image.get_rect(center=(self.random_start, 0))
         self.mask = pg.mask.from_surface(self.image)
 
@@ -110,8 +129,14 @@ while flag_play:
         break
 
     if cnt == 120:
-        meteors.add(Meteors())
+        choices = ("meteor", "enemy ship")
+        cur_choice = random.choice(choices)
+        if cur_choice == "meteor":
+            meteors.add(Meteors())
+        else:
+            enemy_ships.add(EnemyShips())
         cnt = 0
+
 
     keys = pg.key.get_pressed()
     if keys[pg.K_LEFT]:
@@ -124,6 +149,7 @@ while flag_play:
         my_ship.update(dy=1)
 
     meteors.update()
+    enemy_ships.update()
 
     screen.blit(background, (0, 0))
     enemy_ships.draw(screen)
@@ -131,7 +157,13 @@ while flag_play:
     meteors.draw(screen)
     pg.display.update()
 
+
     if pg.sprite.spritecollideany(my_ship, meteors, collided=pg.sprite.collide_mask):
+        s.play()
+        miliseconds = math.ceil(s.get_length()) * 1000
+        pg.time.wait(miliseconds)
+        break
+    if pg.sprite.spritecollideany(my_ship, enemy_ships, collided=pg.sprite.collide_mask):
         s.play()
         miliseconds = math.ceil(s.get_length()) * 1000
         pg.time.wait(miliseconds)
