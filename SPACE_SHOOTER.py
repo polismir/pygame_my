@@ -39,15 +39,17 @@ class Shot(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.image.load(r"images/my_ship/shot.png").convert_alpha()
         self.image = pg.transform.rotate(self.image, 90)
-        self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 2, self.image.get_height() * 1 / 2))
-        self.rect = self.image.get_rect(center=(WIDTH * 1 / 2, HEIGHT - 100))
+        self.image = pg.transform.scale(self.image, (self.image.get_width() * 1 / 4, self.image.get_height() * 1 / 4))
+        x = my_ship.rect.centerx
+        y = my_ship.rect.centery
+        self.rect = self.image.get_rect(center=(x, y))
         self.mask = pg.mask.from_surface(self.image)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
     def update(self):
-        self.rect.y += Shot.speed
+        self.rect.y -= Shot.speed
 
 
 class EnemyShips(pg.sprite.Sprite):
@@ -105,8 +107,10 @@ background = pg.image.load(r"images/cosmic_background.png")
 my_ship = MyShip()
 enemy_ships = pg.sprite.Group()
 meteors = pg.sprite.Group()
+shots = pg.sprite.Group()
 
 s = pg.mixer.Sound("music/destructions_music.wav")
+shot_song = pg.mixer.Sound("music/shot_music.wav")
 
 screen.blit(background, (0, 0))
 enemy_ships.draw(screen)
@@ -115,10 +119,12 @@ meteors.draw(screen)
 pg.display.update()
 
 cnt = 0
+cnt1 = 0
 flag_play = True
 while flag_play:
     clock.tick(FPS)
     cnt += 1
+    cnt1 += 1
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -147,12 +153,17 @@ while flag_play:
         my_ship.update(dy=-1)
     if keys[pg.K_DOWN]:
         my_ship.update(dy=1)
+    if keys[pg.K_SPACE] and cnt1 >= 60:
+        shots.add(Shot())
+        cnt1 = 0
 
     meteors.update()
     enemy_ships.update()
+    shots.update()
 
     screen.blit(background, (0, 0))
     enemy_ships.draw(screen)
+    shots.draw(screen)
     my_ship.draw(screen)
     meteors.draw(screen)
     pg.display.update()
@@ -168,3 +179,7 @@ while flag_play:
         miliseconds = math.ceil(s.get_length()) * 1000
         pg.time.wait(miliseconds)
         break
+    if pg.sprite.groupcollide(shots, meteors, True, True, collided=pg.sprite.collide_mask):
+        pass
+    if pg.sprite.groupcollide(shots, enemy_ships, True, True, collided=pg.sprite.collide_mask):
+        pass
